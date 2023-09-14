@@ -1,0 +1,57 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const data = await fetch(
+    "https://nancomcy54-blogaleoapi.pf3000.wpserveur.net/wp-json/wp/v2/posts"
+  ).then((response) => response.json());
+  return data.map((post) => {
+    return {
+      params: { id: post.id, slug: post.slug },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+---
+
+<Layout title="article">
+  <article class="max-w-[650px] mx-auto">
+    <img
+      transition:name=`image ${post.id}`
+      class="object-cover h-[400px] w-full"
+      src={post.featured_media_src_url}
+      alt=""
+    />
+    <h1
+      class="mt-4 text-[58px] leading-[120%]"
+      transition:name=`title ${post.id}`
+    >
+      {post.title.rendered}
+    </h1>
+    <div class="mt-2 content" set:html={post.content.rendered} />
+  </article>
+</Layout>
+<style lang="postcss" is:global>
+  .content {
+     p {
+        margin-top: 20px !important;
+    }
+
+    h3 {
+        font-size: 36px;
+        margin-top: 40px;
+    }
+
+    h2 {
+        font-size: 40px;
+        margin-top: 40px;
+
+    }
+
+    img {
+        margin-top: 20px;
+    }
+  }
+</style>
